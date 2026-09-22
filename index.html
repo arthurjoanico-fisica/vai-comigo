@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#172b35"><meta name="description" content="Desenhe um caminho, compartilhe e acompanhe a rota com GPS.">
+  <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Vai Comigo — seus caminhos</title>
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="styles.css">
+  <script src="vendor/leaflet.js" defer></script><script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Vai Comigo, início"><span class="brand-symbol" aria-hidden="true">↗</span><span>vai comigo<span class="brand-dot">.</span></span></a>
+    <nav class="tabs" aria-label="Rotas"><button id="library-tab" class="tab active">Minhas rotas</button><button id="new-tab" class="tab"><span data-icon="plus"></span>Criar rota</button></nav>
+    <div class="header-actions"><button id="theme-btn" class="icon-btn" aria-label="Alternar modo noturno" title="Modo noturno"><span data-icon="moon"></span></button><button id="help-btn" class="icon-btn" aria-label="Como usar e instalar" title="Como usar"><span data-icon="help"></span></button></div>
+  </header>
+  <main class="workspace">
+    <div id="map" aria-label="Mapa interativo de rotas"></div>
+    <div class="map-search" id="search-area"><form id="search-form"><span data-icon="search"></span><input id="search-input" aria-label="Pesquisar endereço" placeholder="Busque uma rua, lugar ou cidade" autocomplete="off" maxlength="150"><button type="submit" id="search-btn" aria-label="Buscar endereço"><span data-icon="arrow-right"></span></button></form><div id="search-results" hidden></div></div>
+    <div id="map-message" class="map-message" role="status" hidden></div>
+    <div class="map-controls"><button id="locate-btn" class="icon-btn" title="Minha localização" aria-label="Mostrar minha localização"><span data-icon="locate"></span></button><button id="fit-btn" class="icon-btn" title="Ver toda a rota" aria-label="Ver toda a rota"><span data-icon="expand"></span></button><div class="zoom-controls"><button id="zoom-in" class="icon-btn" aria-label="Aproximar mapa">+</button><button id="zoom-out" class="icon-btn" aria-label="Afastar mapa">−</button></div></div>
+    <aside class="panel" id="panel" aria-label="Planejamento de rotas">
+      <div class="mobile-handle"></div>
+      <section id="library-view">
+        <div class="eyebrow">UM CAMINHO DE CADA VEZ</div><h1>Minhas rotas<span class="accent">.</span></h1>
+        <p class="subtext">Você escolhe por onde ir.</p>
+        <div id="route-list"></div>
+        <div class="empty-state" id="empty-state"><div class="empty-icon" data-icon="route"></div><h2>O caminho é seu</h2><p>Marque os pontos no mapa ou desenhe a rota que vocês querem seguir.</p></div>
+        <button id="new-btn" class="button primary wide"><span data-icon="plus"></span>Desenhar uma rota</button>
+        <button id="import-btn" class="button secondary wide"><span data-icon="upload"></span>Receber ou importar rota</button>
+        <div class="local-note"><span data-icon="phone"></span><span>Suas rotas ficam neste aparelho.<br>Compartilhe para levar a outro celular.</span></div>
+      </section>
+      <section id="editor-view" hidden>
+        <div class="section-heading"><div><div class="eyebrow">DO SEU JEITO</div><h1>Desenhe a rota<span class="accent">.</span></h1></div><button id="cancel-edit" class="icon-btn" aria-label="Sair do editor"><span data-icon="x"></span></button></div>
+        <label class="field-label" for="route-name">Nome do caminho</label><input id="route-name" class="text-input" maxlength="100" placeholder="Ex.: Casa → faculdade" value="Minha rota">
+        <div class="draw-modes" role="group" aria-label="Modo de desenho"><button id="point-mode" class="selected"><span data-icon="pin"></span>Por pontos</button><button id="free-mode"><span data-icon="pen"></span>À mão livre</button></div>
+        <p id="draw-help" class="small">Toque no mapa para marcar a saída e os próximos pontos. Arraste os marcadores para ajustar.</p>
+        <div id="waypoints" class="waypoints"></div>
+        <div class="editor-actions"><button id="undo-btn" class="button ghost"><span data-icon="undo"></span>Desfazer</button><button id="clear-btn" class="button ghost">Limpar</button></div>
+        <button id="snap-btn" class="button secondary wide"><span data-icon="route"></span>Ajustar às ruas</button>
+        <div id="route-kind" class="route-kind">Traçado manual · sem instruções de conversão</div>
+        <div class="stats" id="editor-stats"><div><strong id="edit-distance">0 m</strong><span>distância</span></div><div><strong id="edit-time">—</strong><span>tempo estimado</span></div></div>
+        <details class="route-options"><summary>Tempo e observações</summary><label class="field-label" for="average-speed">Média estimada, incluindo paradas</label><select id="average-speed" class="text-input"><option value="20">20 km/h</option><option value="25">25 km/h</option><option value="30" selected>30 km/h</option><option value="35">35 km/h</option><option value="40">40 km/h</option><option value="50">50 km/h</option></select><label class="field-label" for="route-notes">Observação para quem vai seguir</label><textarea id="route-notes" class="text-input" maxlength="1000" rows="2" placeholder="Ex.: atenção ao cruzamento perto da praça"></textarea></details>
+        <p id="review-hint" class="small">Revise sentidos das ruas, acessos e condições do trajeto antes de salvar.</p>
+        <button id="save-btn" class="button primary wide" disabled><span data-icon="check"></span>Salvar caminho</button>
+      </section>
+      <section id="detail-view" hidden>
+        <button id="back-btn" class="back-button"><span data-icon="arrow-left"></span>Minhas rotas</button>
+        <div class="eyebrow">CAMINHO ESCOLHIDO</div><h1 id="detail-name"></h1><div id="detail-kind" class="pill"></div>
+        <div class="stats"><div><strong id="detail-distance"></strong><span>distância</span></div><div><strong id="detail-time"></strong><span>tempo estimado</span></div></div>
+        <p id="detail-notes" class="note-box" hidden></p><div id="instructions" class="instructions"></div>
+        <button id="start-btn" class="button primary wide"><span data-icon="navigation"></span>Seguir este caminho</button>
+        <button id="share-btn" class="button secondary wide"><span data-icon="share"></span>Enviar rota</button>
+        <div class="detail-actions"><button id="edit-btn" class="button ghost"><span data-icon="pen"></span>Editar</button><button id="export-gpx" class="button ghost">GPX</button><button id="delete-btn" class="icon-btn danger" aria-label="Excluir rota"><span data-icon="trash"></span></button></div>
+        <p class="small">O trajeto fica fixo. Se sair dele, você recebe um aviso para parar e conferir.</p>
+      </section>
+    </aside>
+    <div id="map-tip" class="map-tip"><span data-icon="route"></span>Seu caminho, ponto a ponto</div>
+    <section id="navigation-view" hidden aria-label="Navegação">
+      <div class="nav-instruction"><div id="nav-symbol" class="nav-symbol">↑</div><div><div id="nav-cue-distance" class="eyebrow">BUSCANDO GPS</div><h2 id="nav-instruction">Aguarde sua localização</h2><p id="nav-quality">Mantenha o mapa aberto e a tela ligada.</p></div></div>
+      <div class="nav-bottom"><div class="nav-state" id="nav-state">Aguardando posição</div><div class="nav-metrics"><div><strong id="nav-remaining">—</strong><span>restantes</span></div><div><strong id="nav-time">—</strong><span>estimados</span></div><div><strong id="nav-speed">—</strong><span>km/h</span></div></div><div class="nav-actions"><button id="voice-btn" class="button secondary" aria-pressed="false"><span data-icon="volume"></span>Voz desligada</button><button id="follow-btn" class="icon-btn" aria-label="Centralizar GPS"><span data-icon="locate"></span></button><button id="stop-btn" class="button stop">Encerrar</button></div><button id="resume-here" class="button secondary wide" hidden>Retomar a rota deste ponto</button></div>
+    </section>
+  </main>
+  <dialog id="help-dialog"><button class="dialog-close icon-btn" data-close aria-label="Fechar"><span data-icon="x"></span></button><div class="eyebrow">VAI COMIGO</div><h2>Pronto para o caminho</h2><ol class="steps"><li><b>Prepare.</b> Marque pontos ou desenhe. “Ajustar às ruas” busca um caminho para moto leve; confira o resultado.</li><li><b>Envie.</b> Abra a rota e toque em “Enviar rota”. Quem recebe abre o link e salva no próprio aparelho.</li><li><b>Siga.</b> Com a moto parada, autorize a localização e inicie. Use o mapa aberto, em um suporte adequado.</li></ol><h3>Instalar no iPhone</h3><p>Abra o site no <b>Safari</b>, toque em <b>Compartilhar → Adicionar à Tela de Início</b>. Ative “Abrir como App da Web”, se aparecer.</p><h3>Antes de sair</h3><p>O GPS web pode parar com a tela bloqueada ou outro app aberto. O app tenta manter a tela ligada quando o iPhone permite.</p><p>Mapas, busca e ajuste às ruas precisam de internet. O traçado salvo permanece disponível, mas isso não equivale a ter mapas offline.</p><p>O ajuste usa preferência por vias menores e velocidade de referência de 50 km/h. <b>Não garante que todas as vias sejam permitidas ou adequadas.</b> Confira a categoria do veículo e a sinalização. A volta deve ser planejada separadamente.</p><details><summary>Privacidade e serviços</summary><p>Não há conta nem acompanhamento remoto. O GPS é tratado neste aparelho. Mapas consultados, buscas e pontos enviados para ajuste são recebidos pelos respectivos serviços: OpenStreetMap, Photon/Komoot e Valhalla/FOSSGIS. Links e arquivos contêm o caminho; envie apenas a quem deve vê-lo. Apagar os dados do navegador pode remover suas rotas; exporte uma cópia.</p><p>Serviços públicos têm limites e não oferecem garantia de disponibilidade. Uso pessoal de baixo volume.</p></details><p class="version">Versão 1.0 · Validar no iPhone antes do primeiro trajeto</p></dialog>
+  <dialog id="share-dialog"><button class="dialog-close icon-btn" data-close aria-label="Fechar"><span data-icon="x"></span></button><div class="eyebrow">DE UM CELULAR PARA O OUTRO</div><h2>Leve este caminho</h2><p>O link guarda uma cópia da rota. Mudanças feitas depois precisam de um novo envio.</p><label class="field-label" for="share-url">Link da rota</label><textarea id="share-url" class="text-input" rows="3" readonly></textarea><button id="native-share" class="button primary wide"><span data-icon="share"></span>Compartilhar</button><button id="copy-share" class="button secondary wide">Copiar link</button><button id="download-json" class="button ghost wide"><span data-icon="download"></span>Baixar arquivo da rota</button><p id="share-warning" class="small"></p></dialog>
+  <dialog id="import-dialog"><button class="dialog-close icon-btn" data-close aria-label="Fechar"><span data-icon="x"></span></button><h2>Receber um caminho</h2><p>Cole um link do Vai Comigo ou abra um arquivo de rota.</p><label class="field-label" for="import-url">Link recebido</label><textarea id="import-url" class="text-input" rows="3" placeholder="https://…/#rota=…"></textarea><button id="import-link" class="button primary wide">Abrir rota do link</button><button id="pick-file" class="button secondary wide"><span data-icon="upload"></span>Abrir arquivo JSON ou GPX</button><input id="import-file" type="file" accept=".json,.gpx,application/json,application/gpx+xml" hidden></dialog>
+  <dialog id="start-dialog"><button class="dialog-close icon-btn" data-close aria-label="Fechar"><span data-icon="x"></span></button><div class="eyebrow">ANTES DE PARTIR</div><h2>Tudo pronto?</h2><p>Inicie com a moto parada. Confira o trajeto e mantenha o mapa aberto, com a tela ligada.</p><p id="start-route-warning" class="note-box"></p><p>Se houver desvio ou perda de GPS, pare em local seguro para conferir. O caminho não é recalculado.</p><button id="confirm-start" class="button primary wide"><span data-icon="navigation"></span>Iniciar GPS</button></dialog>
+  <div id="toast" role="status" class="toast" hidden></div>
+  <noscript>Ative o JavaScript para desenhar rotas e usar o mapa.</noscript>
+</body>
+</html>
