@@ -53,4 +53,4 @@ export function parseGPX(text){
   return validateRoute({version:1,name:doc.getElementsByTagNameNS('*','name')[0]?.textContent||'Rota importada',points,mode:'manual',cues:[]});
 }
 const xml=t=>String(t).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-export function toGPX(route){return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Vai Comigo" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>'+xml(route.name)+'</name><trkseg>'+route.points.map(p=>'<trkpt lat="'+p[0]+'" lon="'+p[1]+'"></trkpt>').join('')+'</trkseg></trk></gpx>';}
+export function toGPX(route){return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPS DA VIVICA" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>'+xml(route.name)+'</name><trkseg>'+route.points.map(p=>'<trkpt lat="'+p[0]+'" lon="'+p[1]+'"></trkpt>').join('')+'</trkseg></trk></gpx>';}

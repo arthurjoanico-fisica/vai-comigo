@@ -1,7 +1,10 @@
 {
-  "name": "vai-comigo",
-  "version": "1.0.0",
+  "name": "gps-da-vivica",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test tests/*.test.mjs", "start": "python3 -m http.server 8080" }
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "start": "python3 -m http.server 8080"
+  }
 }

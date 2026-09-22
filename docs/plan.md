@@ -1,4 +1,4 @@
-# Vai Comigo Implementation Plan
+# GPS DA VIVICA Implementation Plan
 
 **Goal:** entregar um app web de rotas pessoais pronto para GitHub Pages.
 **Architecture:** módulos JavaScript sem etapa de build; biblioteca Leaflet incluída; dados pessoais locais e exportáveis.

@@ -1,4 +1,4 @@
-# Vai Comigo — primeira versão
+# GPS DA VIVICA — primeira versão
 
 Objetivo: uma pessoa prepara e revisa uma rota e a outra acompanha esse caminho no iPhone, com GPS e o mapa aberto. Publicação estática pelo GitHub Pages, sem conta, backend ou chave secreta.
 

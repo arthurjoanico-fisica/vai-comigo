@@ -6,3 +6,6 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 [data-icon]{display:inline-flex;align-items:center;justify-content:center;font-size:22px;line-height:1;min-width:20px}.eyebrow{font-size:12px}.field-label,.small,.stats span,.local-note,.route-kind,.pill{font-size:14px}.route-card p{font-size:14px}.nav-instruction p{font-size:14px}.brand-symbol{font-size:33px}.route-card-icon{font-size:29px}.map-search input{font-size:16px}@media(max-width:650px){.eyebrow{font-size:12px}.map-search input{font-size:16px}.empty-state p,.tab,.draw-modes button,.nav-state{font-size:14px}.nav-instruction p{font-size:13px}}
+
+/* Nome personalizado: mantém o cabeçalho legível no celular. */
+.brand{font-size:22px;letter-spacing:-.6px}@media(max-width:650px){.brand{font-size:18px;letter-spacing:-.5px}}@media(max-width:360px){.brand{font-size:16px;gap:6px}.header-actions{gap:3px}}

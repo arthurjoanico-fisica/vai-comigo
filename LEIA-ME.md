@@ -1,4 +1,8 @@
-# Vai Comigo — versão 1.0 de teste
+## Atualização do nome — 1.0.1
+
+Substitua os arquivos no mesmo repositório e pasta usados na publicação atual. O nome exibido passa a GPS DA VIVICA. Não é necessário renomear o repositório nem o projeto no Cloudflare. Feche e reabra o aplicativo após a publicação para carregar a atualização. Ao adicionar à tela inicial do iPhone, use GPS DA VIVICA como nome.
+
+# GPS DA VIVICA — versão 1.0 de teste
 
 Você prepara um caminho no mapa e envia uma cópia para outra pessoa acompanhar pelo GPS do iPhone. O projeto é independente do CAHK: publique em outro repositório ou em uma pasta própria.
 
